@@ -21,6 +21,7 @@
   .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
   .uk { display: block; font-style: italic; color: var(--muted); }
   .addr { font-weight: 600; margin: 0; }
+  .privacy { background: #f4f4f1; border-radius: 9px; padding: 10px 12px; margin: 4px 0 12px; }
   .hero { position: relative; overflow: hidden; border-radius: 18px; margin: 0 0 24px; color: #13284a; background: #fff;
     box-shadow: 0 1px 0 var(--line), 0 8px 24px rgba(19,40,74,.08); }
   .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 60%; }
@@ -148,6 +149,8 @@
         <div class="field"><label class="f" for="tel">Tel. nr.</label>
           <input type="tel" id="tel" autocomplete="tel"></div>
         </div>
+        <p class="hint privacy">🔒 Ši asmeninė informacija viešai niekur nebus skelbiama. Renkamos informacijos reikalingumas pagrįstas projekto Nr. PMIF-2.05-K-01-03 vykdymo reikalavimais.
+          <span class="uk">Ця особиста інформація ніде не буде оприлюднена. Необхідність збору інформації обґрунтована вимогами виконання проєкту № PMIF-2.05-K-01-03.</span></p>
         <label class="consent"><input type="checkbox" id="sutinku" required>
           <span>Sutinku, kad mano duomenys būtų naudojami tik registracijai į šiuos užsiėmimus.</span></label>
         <button type="submit" id="btn">Registruotis</button>
