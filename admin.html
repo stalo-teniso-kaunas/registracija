@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Registracijos — administravimas</title>
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --ink:#161616; --muted:#666; --line:#e2e2de; --accent:#e8317a; --err:#b3261e; --ok:#1d7a46; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .muted { color: var(--muted); }
+  .top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom: 22px; }
+  .top a, .linkbtn { color: var(--ink); font-size:14px; background:none; border:0; text-decoration:underline; cursor:pointer; padding:0; font:inherit; }
+  button.main { font:inherit; font-weight:700; background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 22px; cursor:pointer; }
+  button.sec { font:inherit; font-size:14px; background:#fff; color:var(--ink); border:1px solid #cfcfca; border-radius:999px; padding:6px 14px; cursor:pointer; }
+  button.del { color: var(--err); border-color:#efc3bf; }
+  input, select, textarea { width:100%; font:inherit; padding:9px 11px; border:1px solid #cfcfca; border-radius:9px; background:#fff; color:var(--ink); }
+  textarea { min-height: 60px; resize: vertical; }
+  .login { max-width: 360px; margin: 12vh auto 0; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:26px; }
+  .login h1 { font-size: 22px; margin-bottom: 14px; }
+  .login input { margin-bottom: 12px; }
+  .msg { margin-top:10px; color:var(--err); font-size:14px; min-height: 1em; }
+  .sum { display:grid; grid-template-columns: repeat(auto-fill, minmax(118px,1fr)); gap:8px; margin-bottom: 26px; }
+  .sum a { display:block; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 10px; text-decoration:none; color:var(--ink); }
+  .sum a b { display:block; font-size:15px; }
+  .sum a span { font-size:13px; color:var(--muted); }
+  .sum a.full { border-color: var(--accent); }
+  .sum a.past { opacity:.5; }
+  section.day { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:16px; scroll-margin-top: 12px; }
+  section.day.past { opacity:.7; }
+  .dayhead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 8px; }
+  .dayhead h2 { font-size:18px; margin:0; }
+  .badge { font-size:13px; font-weight:700; padding:3px 10px; border-radius:999px; background:#eef6f1; color:var(--ok); }
+  .badge.full { background:#fde8f0; color:var(--accent); }
+  .person { border-top:1px solid var(--line); padding:10px 0; display:grid; grid-template-columns: 1fr auto; gap:10px; }
+  .person .name { font-weight:700; }
+  .person .det { font-size:13px; color:var(--muted); }
+  .person .note { font-size:13px; margin-top:2px; }
+  .acts { display:flex; gap:6px; align-items:flex-start; }
+  .empty { color:var(--muted); font-size:14px; border-top:1px solid var(--line); padding-top:10px; }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 12px; overflow:auto; z-index:10; }
+  .modal .box { background:#fff; border-radius:14px; padding:20px; width:100%; max-width:520px; }
+  .modal h3 { margin:0 0 14px; }
+  .modal label { display:block; font-size:13px; font-weight:600; margin:10px 0 4px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+  .modal .btns { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+  @media (max-width:560px){ .grid2{grid-template-columns:1fr;} .person{grid-template-columns:1fr;} }
+  .loading { color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="loginBox" class="login">
+  <h1>Administravimas</h1>
+  <p class="muted" style="margin-top:0">Įveskite prisijungimo kodą.</p>
+  <form id="loginF"><input type="password" id="kodas" autocomplete="current-password" placeholder="Kodas" autofocus>
+  <button class="main" style="width:100%">Prisijungti</button></form>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<div id="app" class="wrap" hidden>
+  <div class="top">
+    <div><h1>Stalo teniso registracijos</h1>
+      <div class="muted" id="viso"></div></div>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <button class="linkbtn" id="atnaujinti">Atnaujinti</button>
+      <a id="lentele" href="#" target="_blank" rel="noopener">Google lentelė</a>
+      <a href="./" target="_blank" rel="noopener">Registracijos puslapis</a>
+      <button class="linkbtn" id="atsijungti">Atsijungti</button>
+    </div>
+  </div>
+  <div class="sum" id="sum"></div>
+  <div id="days"><p class="loading">Kraunama…</p></div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <form class="box" id="editF">
+    <h3 id="mTitle">Redaguoti</h3>
+    <label for="e_data">Užsiėmimo data</label><select id="e_data"></select>
+    <label for="e_vardas">Vardas, pavardė</label><input id="e_vardas">
+    <div class="grid2">
+      <div><label for="e_gimimo">Gimimo data</label><input id="e_gimimo" type="date"></div>
+      <div><label for="e_pilietybe">Pilietybė</label><input id="e_pilietybe"></div>
+    </div>
+    <label for="e_leidimas">Leidimo laikinai gyventi dok. nr.</label><input id="e_leidimas">
+    <label for="e_gyvena">Gyvenamoji vieta</label><input id="e_gyvena">
+    <div class="grid2">
+      <div><label for="e_pastas">El. paštas</label><input id="e_pastas" type="email"></div>
+      <div><label for="e_tel">Tel. nr.</label><input id="e_tel"></div>
+    </div>
+    <label for="e_pastabos">Pastabos (mato tik administratorius)</label><textarea id="e_pastabos"></textarea>
+    <div class="msg" id="mMsg"></div>
+    <div class="btns"><button type="button" class="sec" id="mCancel">Atšaukti</button><button class="main" id="mSave">Išsaugoti</button></div>
+  </form>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbwJCmmsGYu0dM_1Xe_0zQ-W_Vv7Gii4GrduXF53Mspr1lWrADQs_3puLIllHep3k6Bn/exec';
+const MEN = ['sausio','vasario','kovo','balandžio','gegužės','birželio','liepos','rugpjūčio','rugsėjo','spalio','lapkričio','gruodžio'];
+const SAV = ['sekmadienis','pirmadienis','antradienis','trečiadienis','ketvirtadienis','penktadienis','šeštadienis'];
+const LAUKAI = ['vardas','gimimo','pilietybe','leidimas','gyvena','pastas','tel','pastabos'];
+let KODAS = '', B = null, redaguojamas = null;
+
+function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+function esc(s) { return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function grazi(d) { const [y,m,dd] = d.split('-').map(Number); return `${MEN[m-1]} ${dd} d.`; }
+function savaite(d) { const [y,m,dd] = d.split('-').map(Number); return SAV[new Date(y,m-1,dd).getDay()]; }
+function dabar() { return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Vilnius',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date()).replace(',',''); }
+
+async function kviesti(veiksmas, extra) {
+  const r = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(Object.assign({ veiksmas, kodas: KODAS }, extra || {})) });
+  return r.json();
+}
+
+function rodyti(j) {
+  B = j;
+  document.getElementById('lentele').href = j.lentele;
+  const visoZm = j.irasai.length;
+  document.getElementById('viso').textContent = `Iš viso registracijų: ${visoZm}. Vietų viename užsiėmime: ${j.max}.`;
+  const now = dabar();
+  let sum = '', days = '';
+  j.datos.forEach(d => {
+    const zm = j.irasai.filter(r => r.data === d);
+    const past = now >= `${d} ${j.laikas}`, full = zm.length >= j.max;
+    sum += `<a href="#d${d}" class="${full?'full':''} ${past?'past':''}"><b>${grazi(d)}</b><span>${zm.length} / ${j.max}${past?' · praėjo':''}</span></a>`;
+    days += `<section class="day ${past?'past':''}" id="d${d}"><div class="dayhead">
+      <h2>${d.slice(0,4)} m. ${grazi(d)}, ${savaite(d)}, ${j.laikas}</h2>
+      <div style="display:flex;gap:8px;align-items:center"><span class="badge ${full?'full':''}">${zm.length} / ${j.max}${full?' · pilna':''}</span>
+      <button class="sec" data-add="${d}">+ Pridėti</button></div></div>`;
+    if (!zm.length) days += `<div class="empty">Kol kas niekas neužsiregistravo.</div>`;
+    zm.forEach(r => {
+      days += `<div class="person"><div>
+        <div class="name">${esc(r.vardas)}</div>
+        <div class="det">Gim. ${esc(r.gimimo)} · ${esc(r.pilietybe)}${r.leidimas ? ' · Leidimas: ' + esc(r.leidimas) : ''}</div>
+        <div class="det">${esc(r.gyvena)}</div>
+        <div class="det">${esc(r.pastas)} · ${esc(r.tel)} · užsiregistravo ${esc(r.kada)}</div>
+        ${r.pastabos ? `<div class="note">📝 ${esc(r.pastabos)}</div>` : ''}
+      </div><div class="acts"><button class="sec" data-edit="${esc(r.id)}">Keisti</button><button class="sec del" data-del="${esc(r.id)}">Ištrinti</button></div></div>`;
+    });
+    days += `</section>`;
+  });
+  const kitos = j.irasai.filter(r => j.datos.indexOf(r.data) < 0);
+  if (kitos.length) {
+    days += `<section class="day"><div class="dayhead"><h2>Kitos datos (įvestos lentelėje ranka)</h2></div>`;
+    kitos.forEach(r => { days += `<div class="person"><div><div class="name">${esc(r.vardas)}</div><div class="det">${esc(r.data)}</div></div><div class="acts"><button class="sec" data-edit="${esc(r.id)}">Keisti</button><button class="sec del" data-del="${esc(r.id)}">Ištrinti</button></div></div>`; });
+    days += `</section>`;
+  }
+  document.getElementById('sum').innerHTML = sum;
+  document.getElementById('days').innerHTML = days;
+}
+
+async function krauti() {
+  document.getElementById('days').innerHTML = '<p class="loading">Kraunama…</p>';
+  try {
+    const j = await kviesti('admin_sarasas');
+    if (!j.ok) { if (j.blogasKodas) return atsijungti('Neteisingas kodas.'); alert(j.klaida); return; }
+    rodyti(j);
+  } catch (e) { document.getElementById('days').innerHTML = '<p class="loading">Nepavyko pasiekti duomenų. Patikrinkite internetą ir spauskite „Atnaujinti“.</p>'; }
+}
+
+function atsijungti(msg) {
+  KODAS = ''; ss('kodas', null);
+  document.getElementById('app').hidden = true;
+  document.getElementById('loginBox').hidden = false;
+  document.getElementById('loginMsg').textContent = msg || '';
+}
+
+document.getElementById('loginF').addEventListener('submit', async e => {
+  e.preventDefault();
+  KODAS = document.getElementById('kodas').value.trim();
+  if (!KODAS) return;
+  document.getElementById('loginMsg').textContent = 'Tikrinama…';
+  try {
+    const j = await kviesti('admin_sarasas');
+    if (!j.ok) { document.getElementById('loginMsg').textContent = j.klaida || 'Klaida.'; return; }
+    ss('kodas', KODAS);
+    document.getElementById('loginBox').hidden = true;
+    document.getElementById('app').hidden = false;
+    rodyti(j);
+  } catch (e) { document.getElementById('loginMsg').textContent = 'Nepavyko prisijungti. Patikrinkite internetą.'; }
+});
+
+function atidaryti(irasas, naujaData) {
+  redaguojamas = irasas ? irasas.id : null;
+  document.getElementById('mTitle').textContent = irasas ? 'Redaguoti registraciją' : 'Pridėti žmogų';
+  const sel = document.getElementById('e_data');
+  sel.innerHTML = B.datos.map(d => `<option value="${d}">${d} (${grazi(d)}, ${savaite(d)})</option>`).join('');
+  if (irasas && B.datos.indexOf(irasas.data) < 0) sel.innerHTML += `<option value="${esc(irasas.data)}">${esc(irasas.data)}</option>`;
+  sel.value = irasas ? irasas.data : naujaData;
+  LAUKAI.forEach(k => document.getElementById('e_' + k).value = irasas ? (irasas[k] || '') : '');
+  document.getElementById('mMsg').textContent = '';
+  document.getElementById('modal').hidden = false;
+}
+function uzdaryti() { document.getElementById('modal').hidden = true; }
+
+document.getElementById('days').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.add) atidaryti(null, b.dataset.add);
+  if (b.dataset.edit) atidaryti(B.irasai.find(r => r.id === b.dataset.edit));
+  if (b.dataset.del) {
+    const r = B.irasai.find(x => x.id === b.dataset.del);
+    if (!confirm(`Ištrinti ${r.vardas} registraciją ${grazi(r.data)}? Vieta atsilaisvins.`)) return;
+    b.disabled = true;
+    const j = await kviesti('admin_trinti', { id: r.id });
+    if (!j.ok) { alert(j.klaida); b.disabled = false; return; }
+    rodyti(j);
+  }
+});
+
+document.getElementById('editF').addEventListener('submit', async e => {
+  e.preventDefault();
+  const irasas = { data: document.getElementById('e_data').value };
+  LAUKAI.forEach(k => irasas[k] = document.getElementById('e_' + k).value.trim());
+  if (!irasas.vardas) { document.getElementById('mMsg').textContent = 'Įrašykite vardą ir pavardę.'; return; }
+  const kitu = B.irasai.filter(r => r.data === irasas.data && r.id !== redaguojamas).length;
+  if (kitu >= B.max && !confirm(`${grazi(irasas.data)} jau ${kitu} / ${B.max}. Vis tiek įrašyti (bus daugiau nei ${B.max})?`)) return;
+  const btn = document.getElementById('mSave'); btn.disabled = true; btn.textContent = 'Saugoma…';
+  try {
+    const j = redaguojamas ? await kviesti('admin_keisti', { id: redaguojamas, irasas }) : await kviesti('admin_prideti', { irasas });
+    if (!j.ok) { document.getElementById('mMsg').textContent = j.klaida; }
+    else { uzdaryti(); rodyti(j); }
+  } catch (err) { document.getElementById('mMsg').textContent = 'Nepavyko išsaugoti. Patikrinkite internetą.'; }
+  btn.disabled = false; btn.textContent = 'Išsaugoti';
+});
+document.getElementById('mCancel').addEventListener('click', uzdaryti);
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') uzdaryti(); });
+document.getElementById('atnaujinti').addEventListener('click', krauti);
+document.getElementById('atsijungti').addEventListener('click', () => atsijungti());
+
+// Tylus atsinaujinimas kas 20 s (ne tada, kai atidarytas redagavimo langas).
+async function tyliai() {
+  if (!KODAS || document.hidden || !document.getElementById('modal').hidden) return;
+  try { const j = await kviesti('admin_sarasas'); if (j.ok && document.getElementById('modal').hidden) rodyti(j); } catch (e) {}
+}
+setInterval(tyliai, 20000);
+document.addEventListener('visibilitychange', tyliai);
+
+const issaugotas = ss('kodas');
+if (issaugotas) {
+  KODAS = issaugotas;
+  document.getElementById('loginBox').hidden = true;
+  document.getElementById('app').hidden = false;
+  krauti();
+}
+</script>
+</body>
+</html>

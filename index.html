@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stalo teniso užsiėmimai — registracija</title>
+<meta name="description" content="Registracija į stalo teniso užsiėmimus. Pasirinkite datą ir matykite, kiek liko laisvų vietų.">
+<style>
+  :root {
+    --bg: #f6f6f4; --card: #ffffff; --ink: #161616; --muted: #666; --line: #e2e2de;
+    --accent: #e8317a; --accent-ink: #fff; --ok: #1d7a46; --full: #b3b3b3; --err: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.01em; }
+  .lead { color: var(--muted); margin: 0 0 28px; }
+  h2 { font-size: 19px; margin: 32px 0 6px; }
+  .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .month { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--muted); margin: 18px 0 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .date { position: relative; display: block; background: var(--card); border: 2px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: border-color .15s; }
+  .date input { position: absolute; opacity: 0; pointer-events: none; }
+  .date .d { font-size: 18px; font-weight: 700; }
+  .date .w { font-size: 13px; color: var(--muted); }
+  .date .s { font-size: 13px; margin-top: 6px; font-weight: 600; color: var(--ok); }
+  .date:hover { border-color: #c9c9c4; }
+  .date.on { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,49,122,.15); }
+  .date.on::after { content: "✓"; position: absolute; top: 8px; right: 12px; color: var(--accent); font-weight: 800; }
+  .date.full { cursor: not-allowed; background: #f0f0ee; }
+  .date.full .d, .date.full .w { color: var(--full); }
+  .date.full .s { color: var(--full); }
+  form .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } h1 { font-size: 25px; } }
+  label.f { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  label.f small { font-weight: 400; color: var(--muted); }
+  input[type=text], input[type=email], input[type=tel], input[type=date] {
+    width: 100%; font: inherit; padding: 10px 12px; border: 1px solid #cfcfca; border-radius: 9px; background: #fff; color: var(--ink); }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .field { margin-bottom: 14px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin: 6px 0 18px; }
+  .consent input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent); }
+  button { font: inherit; font-weight: 700; background: var(--accent); color: var(--accent-ink); border: 0;
+    border-radius: 999px; padding: 13px 28px; cursor: pointer; width: 100%; font-size: 17px; }
+  button:disabled { opacity: .55; cursor: wait; }
+  .msg { margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 15px; display: none; }
+  .msg.err { display: block; background: #fdecea; color: var(--err); }
+  .msg.ok { display: block; background: #e7f5ec; color: var(--ok); }
+  .done { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 36px 20px; }
+  .done .big { font-size: 44px; }
+  .loading { color: var(--muted); font-size: 14px; }
+  .empty { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Stalo teniso užsiėmimai</h1>
+  <p class="lead">Registracija. Visi užsiėmimai prasideda 11:00 val. Į vieną užsiėmimą priimama iki <span id="maxTxt">6</span> žmonių.</p>
+
+  <div id="formBox">
+    <h2>1. Pasirinkite datą</h2>
+    <p class="hint">Galite pažymėti kelias datas. Kai vietų nebelieka, data užsidaro.</p>
+    <div id="dates"><p class="loading">Tikrinamos laisvos vietos…</p></div>
+
+    <form id="f" novalidate>
+      <h2>2. Jūsų duomenys</h2>
+      <p class="hint">Duomenų reikia prieš užsiėmimą. Juos matys tik organizatorius.</p>
+      <div class="card">
+        <div class="field"><label class="f" for="vardas">Vardas, pavardė</label>
+          <input type="text" id="vardas" autocomplete="name" required></div>
+        <div class="row">
+          <div class="field"><label class="f" for="gimimo">Gimimo data</label>
+            <input type="date" id="gimimo" required></div>
+          <div class="field"><label class="f" for="pilietybe">Pilietybė</label>
+            <input type="text" id="pilietybe" required></div>
+        </div>
+        <div class="field"><label class="f" for="leidimas">Leidimo laikinai gyventi dokumento nr. <small>(jei turite)</small></label>
+          <input type="text" id="leidimas"></div>
+        <div class="field"><label class="f" for="gyvena">Gyvenamoji vieta</label>
+          <input type="text" id="gyvena" autocomplete="street-address" required></div>
+        <div class="row">
+          <div class="field"><label class="f" for="pastas">El. paštas</label>
+            <input type="email" id="pastas" autocomplete="email" required></div>
+          <div class="field"><label class="f" for="tel">Tel. nr.</label>
+            <input type="tel" id="tel" autocomplete="tel" required></div>
+        </div>
+        <label class="consent"><input type="checkbox" id="sutinku" required>
+          <span>Sutinku, kad mano duomenys būtų naudojami tik registracijai į šiuos užsiėmimus.</span></label>
+        <button type="submit" id="btn">Registruotis</button>
+        <div class="msg" id="msg"></div>
+      </div>
+    </form>
+  </div>
+
+  <div id="doneBox" class="done" hidden>
+    <div class="big">🏓</div>
+    <h2>Jūs užregistruoti!</h2>
+    <p id="doneTxt"></p>
+    <p><a href="#" id="again">Registruoti kitą žmogų</a></p>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbwJCmmsGYu0dM_1Xe_0zQ-W_Vv7Gii4GrduXF53Mspr1lWrADQs_3puLIllHep3k6Bn/exec';
+const LAIKAS = '11:00';
+const DATOS = ['2026-12-05','2026-12-12','2026-12-19','2026-12-21','2026-12-23',
+  '2027-01-09','2027-01-16','2027-01-23','2027-01-30',
+  '2027-02-06','2027-02-13','2027-02-17','2027-02-19','2027-02-27'];
+const MEN = ['sausio','vasario','kovo','balandžio','gegužės','birželio','liepos','rugpjūčio','rugsėjo','spalio','lapkričio','gruodžio'];
+const MEN_V = ['Sausis','Vasaris','Kovas','Balandis','Gegužė','Birželis','Liepa','Rugpjūtis','Rugsėjis','Spalis','Lapkritis','Gruodis'];
+const SAV = ['sekmadienis','pirmadienis','antradienis','trečiadienis','ketvirtadienis','penktadienis','šeštadienis'];
+
+let MAX = 6, uzimta = {}, pasirinkta = new Set();
+
+function dalys(d) { const [y,m,dd] = d.split('-').map(Number); return {y, m, dd, w: new Date(y, m-1, dd).getDay()}; }
+function grazi(d) { const p = dalys(d); return `${MEN[p.m-1]} ${p.dd} d.`; }
+function vilniusDabar() {
+  const f = new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Vilnius', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+  return f.format(new Date()).replace(',', '');
+}
+function praejo(d) { return vilniusDabar() >= `${d} ${LAIKAS}`; }
+function laisva(d) { return Math.max(0, MAX - (uzimta[d] || 0)); }
+function vietuZodis(n) {
+  if (n % 10 === 1 && n % 100 !== 11) return 'vieta';
+  if (n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) return 'vietos';
+  return 'vietų';
+}
+
+function piesti() {
+  const box = document.getElementById('dates');
+  const likusios = DATOS.filter(d => !praejo(d));
+  if (!likusios.length) { box.innerHTML = '<p class="empty">Šiuo metu registracijai atvirų datų nėra.</p>'; return; }
+  let html = '', men = '';
+  likusios.forEach(d => {
+    const p = dalys(d);
+    const key = p.y + '-' + p.m;
+    if (key !== men) {
+      if (men) html += '</div>';
+      html += `<div class="month">${MEN_V[p.m-1]} ${p.y}</div><div class="grid">`;
+      men = key;
+    }
+    const l = laisva(d), full = l === 0;
+    if (full) pasirinkta.delete(d);
+    const on = pasirinkta.has(d);
+    html += `<label class="date${full ? ' full' : ''}${on ? ' on' : ''}" data-d="${d}">
+      <input type="checkbox" value="${d}" ${full ? 'disabled' : ''} ${on ? 'checked' : ''}>
+      <div class="d">${grazi(d)}</div><div class="w">${SAV[p.w]}, ${LAIKAS}</div>
+      <div class="s">${full ? 'Vietų nebėra' : `Liko ${l} ${vietuZodis(l)} iš ${MAX}`}</div></label>`;
+  });
+  html += '</div>';
+  box.innerHTML = html;
+  box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
+    cb.checked ? pasirinkta.add(cb.value) : pasirinkta.delete(cb.value);
+    cb.closest('.date').classList.toggle('on', cb.checked);
+  }));
+}
+
+async function krauti() {
+  try {
+    const r = await fetch(API + '?t=' + Date.now());
+    const j = await r.json();
+    MAX = j.max || MAX; uzimta = j.uzimta || {};
+    document.getElementById('maxTxt').textContent = MAX;
+  } catch (e) {
+    document.getElementById('dates').innerHTML = '<p class="empty">Nepavyko patikrinti laisvų vietų. Perkraukite puslapį.</p>';
+    return;
+  }
+  piesti();
+}
+
+function rodytiKlaida(t) { const m = document.getElementById('msg'); m.className = 'msg err'; m.textContent = t; }
+
+document.getElementById('f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  if (!pasirinkta.size) { rodytiKlaida('Pasirinkite bent vieną datą.'); document.getElementById('dates').scrollIntoView({behavior:'smooth'}); return; }
+  for (const id of ['vardas','gimimo','pilietybe','gyvena','pastas','tel']) {
+    if (!v(id)) { rodytiKlaida('Užpildykite visus laukus.'); document.getElementById(id).focus(); return; }
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('pastas'))) { rodytiKlaida('Patikrinkite el. pašto adresą.'); return; }
+  if (!document.getElementById('sutinku').checked) { rodytiKlaida('Pažymėkite sutikimą dėl duomenų.'); return; }
+
+  const btn = document.getElementById('btn');
+  btn.disabled = true; btn.textContent = 'Siunčiama…';
+  document.getElementById('msg').className = 'msg';
+  const datos = [...pasirinkta].sort();
+  try {
+    const r = await fetch(API, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify({ datos, vardas: v('vardas'), gimimo: v('gimimo'), pilietybe: v('pilietybe'),
+        leidimas: v('leidimas'), gyvena: v('gyvena'), pastas: v('pastas'), tel: v('tel') }) });
+    const j = await r.json();
+    if (j.uzimta) { uzimta = j.uzimta; }
+    if (j.ok) {
+      document.getElementById('formBox').hidden = true;
+      document.getElementById('doneBox').hidden = false;
+      document.getElementById('doneTxt').textContent =
+        `${v('vardas')}, laukiame jūsų: ${datos.map(grazi).join(', ')}, ${LAIKAS} val.`;
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    } else if (j.pilnos) {
+      piesti();
+      rodytiKlaida('Kol pildėte, užsipildė: ' + j.pilnos.map(grazi).join(', ') + '. Pasirinkite kitą datą.');
+    } else if (j.kartojasi) {
+      rodytiKlaida('Su šiuo el. paštu jau esate užsiregistravę: ' + j.kartojasi.map(grazi).join(', ') + '. Atžymėkite šią datą.');
+    } else {
+      rodytiKlaida(j.klaida || 'Nepavyko užsiregistruoti. Bandykite dar kartą.');
+    }
+  } catch (err) {
+    rodytiKlaida('Nepavyko išsiųsti. Patikrinkite internetą ir bandykite dar kartą.');
+  }
+  btn.disabled = false; btn.textContent = 'Registruotis';
+});
+
+document.getElementById('again').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('f').reset(); pasirinkta.clear();
+  document.getElementById('doneBox').hidden = true;
+  document.getElementById('formBox').hidden = false;
+  krauti();
+});
+
+krauti();
+// Laisvos vietos atsinaujina pačios kas 15 s, kad matytųsi kitų registracijos ir administratoriaus pakeitimai.
+setInterval(async () => {
+  if (document.hidden || document.getElementById('formBox').hidden) return;
+  try {
+    const j = await (await fetch(API + '?t=' + Date.now())).json();
+    if (j && j.uzimta) { MAX = j.max || MAX; uzimta = j.uzimta; piesti(); }
+  } catch (e) {}
+}, 15000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !document.getElementById('formBox').hidden) krauti(); });
+</script>
+</body>
+</html>
