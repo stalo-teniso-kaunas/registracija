@@ -19,6 +19,9 @@
   .lead { color: var(--muted); margin: 0 0 28px; }
   h2 { font-size: 19px; margin: 32px 0 6px; }
   .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .uk { display: block; font-style: italic; color: var(--muted); }
+  .addr { font-weight: 600; margin: 0 0 6px; }
+  button:hover:not(:disabled) { background: #a3e2bf; }
   .month { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em;
     color: var(--muted); margin: 18px 0 8px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
@@ -45,7 +48,7 @@
   .field { margin-bottom: 14px; }
   .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin: 6px 0 18px; }
   .consent input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent); }
-  button { font: inherit; font-weight: 700; background: var(--accent); color: var(--accent-ink); border: 0;
+  button { font: inherit; font-weight: 700; background: #b9ebcf; color: #0f3d24; border: 0;
     border-radius: 999px; padding: 13px 28px; cursor: pointer; width: 100%; font-size: 17px; }
   button:disabled { opacity: .55; cursor: wait; }
   .msg { margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 15px; display: none; }
@@ -71,24 +74,29 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Stalo teniso užsiėmimai</h1>
-  <p class="lead">Registracija. Visi užsiėmimai prasideda 11:00 val. Į vieną užsiėmimą priimama iki <span id="maxTxt">6</span> žmonių.</p>
+  <h1>STALO TENISO UŽSIĖMIMAI</h1>
+  <p class="addr">📍 Varnių 48B, Kaunas</p>
+  <p class="lead">Registracija. Visi užsiėmimai prasideda 11:00 val. Į vieną užsiėmimą priimama iki <span class="maxTxt">6</span> žmonių.
+    <span class="uk">Реєстрація. Усі заняття починаються об 11:00. На одне заняття приймається до <span class="maxTxt">6</span> осіб.</span></p>
 
   <div id="formBox">
     <h2>1. Pasirinkite datą</h2>
-    <p class="hint">Galite pažymėti kelias datas. Kai vietų nebelieka, data užsidaro.</p>
+    <p class="hint">Galite pažymėti kelias datas. Kai vietų nebelieka, data užsidaro.
+      <span class="uk">Можна обрати кілька дат. Коли місць не залишається, дата закривається.</span></p>
     <div id="dates"><p class="loading">Tikrinamos laisvos vietos…</p></div>
 
     <form id="f" novalidate>
       <h2>2. Jūsų duomenys</h2>
-      <p class="hint">Duomenų reikia prieš užsiėmimą. Juos matys tik organizatorius.</p>
+      <p class="hint">Duomenų reikia prieš užsiėmimą. Juos matys tik organizatorius.
+        <span class="uk">Дані потрібні до заняття. Їх бачитиме лише організатор.</span></p>
       <div class="card">
         <div class="field"><span class="f">Ar registruojatės pirmą kartą?</span>
           <div class="pills">
             <label class="pill"><input type="radio" name="pirma" value="Taip"><span>Taip, pirmą kartą</span></label>
             <label class="pill"><input type="radio" name="pirma" value="Ne"><span>Ne, jau registravausi</span></label>
           </div></div>
-        <div id="kartojasiInfo" class="note" hidden>Užtenka vardo, pavardės ir el. pašto, kurį nurodėte pirmą kartą. Kitus duomenis jau turime.</div>
+        <div id="kartojasiInfo" class="note" hidden>Užtenka vardo, pavardės ir el. pašto, kurį nurodėte pirmą kartą. Kitus duomenis jau turime.
+          <span class="uk">Достатньо імені, прізвища та електронної пошти, які ви вказали першого разу. Інші дані у нас уже є.</span></div>
         <div id="pagrindiniai" hidden>
         <div class="field"><label class="f" for="vardas">Vardas, pavardė</label>
           <input type="text" id="vardas" autocomplete="name"></div>
@@ -102,7 +110,7 @@
           <div class="field"><label class="f" for="pilietybe">Pilietybė</label>
             <input type="text" id="pilietybe"></div>
         </div>
-        <div class="field"><label class="f" for="leidimas">Leidimo laikinai gyventi dokumento nr. <small>(jei turite)</small></label>
+        <div class="field"><label class="f" for="leidimas">Leidimo laikinai gyventi dokumento nr. <small>(jei turite / <i>якщо маєте</i>)</small></label>
           <input type="text" id="leidimas"></div>
         <div class="row">
           <div class="field"><label class="f" for="isduotas">Leidimo išdavimo data</label>
@@ -128,7 +136,7 @@
     <h2>Registracija patvirtinta!</h2>
     <p id="doneTxt"></p>
     <div class="coach">
-      <div class="coach-t">Trenerė</div>
+      <div class="coach-t">Trenerė / <i>Тренерка</i></div>
       <div class="coach-n">Gabrielė Matukaitytė-Klimienė</div>
       <div><a href="tel:+37063524401">+370 635 24401</a></div>
       <div><a href="mailto:m.gabriele.m@gmail.com">m.gabriele.m@gmail.com</a></div>
@@ -197,7 +205,7 @@ async function krauti() {
     const r = await fetch(API + '?t=' + Date.now());
     const j = await r.json();
     MAX = j.max || MAX; uzimta = j.uzimta || {};
-    document.getElementById('maxTxt').textContent = MAX;
+    document.querySelectorAll('.maxTxt').forEach(e => e.textContent = MAX);
   } catch (e) {
     document.getElementById('dates').innerHTML = '<p class="empty">Nepavyko patikrinti laisvų vietų. Perkraukite puslapį.</p>';
     return;
