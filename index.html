@@ -20,7 +20,18 @@
   h2 { font-size: 19px; margin: 32px 0 6px; }
   .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
   .uk { display: block; font-style: italic; color: var(--muted); }
-  .addr { font-weight: 600; margin: 0 0 6px; }
+  .addr { font-weight: 600; margin: 0; }
+  .hero { position: relative; overflow: hidden; border-radius: 18px; margin: 0 0 24px; color: #fff; background: #0f4a2d; }
+  .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(6,34,20,.9) 0%, rgba(6,34,20,.72) 55%, rgba(6,34,20,.2) 100%); }
+  .hero-in { position: relative; z-index: 1; padding: 26px 22px 24px; max-width: 560px; }
+  .hero h1 { color: #fff; margin: 6px 0 10px; }
+  .hero .proj { font-size: 13px; margin: 0 0 4px; color: rgba(255,255,255,.85); }
+  .hero .sub { font-size: 16px; margin: 0 0 14px; }
+  .hero .uk { color: rgba(255,255,255,.78); }
+  .hero .addr { display: inline-block; background: rgba(255,255,255,.14); border-radius: 999px; padding: 5px 12px; font-size: 15px; }
+  @media (max-width: 560px) { .hero::after { background: rgba(6,34,20,.78); } .hero-in { padding: 22px 18px; } }
   button:hover:not(:disabled) { background: #a3e2bf; }
   .month { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em;
     color: var(--muted); margin: 18px 0 8px; }
@@ -74,8 +85,40 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>STALO TENISO UŽSIĖMIMAI</h1>
-  <p class="addr">📍 Varnių 48B, Kaunas</p>
+  <header class="hero">
+    <svg class="hero-bg" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <pattern id="mesh" width="8" height="8" patternUnits="userSpaceOnUse">
+          <path d="M0 0L8 8M8 0L0 8" stroke="#ffffff" stroke-opacity=".35" stroke-width="1"/>
+        </pattern>
+        <radialGradient id="ball" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ffd9b0"/></radialGradient>
+        <linearGradient id="table" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#23895a"/><stop offset="1" stop-color="#16653f"/></linearGradient>
+      </defs>
+      <rect width="800" height="420" fill="#0f4a2d"/>
+      <rect x="30" y="30" width="740" height="360" rx="4" fill="url(#table)" stroke="#fff" stroke-width="7"/>
+      <line x1="30" y1="210" x2="770" y2="210" stroke="#fff" stroke-width="3"/>
+      <rect x="392" y="14" width="16" height="392" fill="#0a2e1c" fill-opacity=".75"/>
+      <rect x="392" y="14" width="16" height="392" fill="url(#mesh)"/>
+      <rect x="389" y="14" width="22" height="5" fill="#fff"/>
+      <rect x="389" y="401" width="22" height="5" fill="#fff"/>
+      <ellipse cx="572" cy="304" rx="13" ry="5" fill="#000" fill-opacity=".25"/>
+      <circle cx="566" cy="290" r="12" fill="url(#ball)"/>
+      <g transform="translate(668 250) rotate(-35)">
+        <rect x="-11" y="52" width="22" height="78" rx="9" fill="#a8743f"/>
+        <rect x="-11" y="52" width="22" height="78" rx="9" fill="none" stroke="#6e4823" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="58" ry="64" fill="#1a1a1a"/>
+        <ellipse cx="0" cy="0" rx="54" ry="60" fill="#c8202f"/>
+      </g>
+    </svg>
+    <div class="hero-in">
+      <p class="proj">Projekto pavadinimas: Užsieniečių vaikų įtraukties stiprinimas per neformalųjį ugdymą sporto veiklose regionuose.
+        <span class="uk">Назва проєкту: Посилення інклюзії дітей-іноземців через неформальну освіту у спортивній діяльності в регіонах.</span></p>
+      <h1>STALO TENISO UŽSIĖMIMAI</h1>
+      <p class="sub">Stalo teniso užsiėmimai vaikams iš trečiųjų šalių – judėjimui, draugystei ir sėkmingai integracijai Lietuvoje.
+        <span class="uk">Заняття з настільного тенісу для дітей із третіх країн – для руху, дружби та успішної інтеграції в Литві.</span></p>
+      <p class="addr">📍 Varnių 48B, Kaunas</p>
+    </div>
+  </header>
   <p class="lead">Registracija. Visi užsiėmimai prasideda 11:00 val. Į vieną užsiėmimą priimama iki <span class="maxTxt">6</span> žmonių.
     <span class="uk">Реєстрація. Усі заняття починаються об 11:00. На одне заняття приймається до <span class="maxTxt">6</span> осіб.</span></p>
 
