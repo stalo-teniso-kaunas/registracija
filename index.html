@@ -24,18 +24,19 @@
   .privacy { background: #f4f4f1; border-radius: 9px; padding: 10px 12px; margin: 4px 0 12px; }
   .hero { position: relative; overflow: hidden; border-radius: 18px; margin: 0 0 24px; color: #13284a; background: #fff;
     box-shadow: 0 1px 0 var(--line), 0 8px 24px rgba(19,40,74,.08); }
-  .hero-photo { position: absolute; top: 0; right: 0; width: 72%; height: 100%; object-fit: cover; object-position: 60% 55%; }
-  .hero::after { content: ""; position: absolute; inset: 0;
-    background: linear-gradient(90deg, #fff 0%, #fff 30%, rgba(255,255,255,.88) 44%, rgba(255,255,255,.3) 58%, rgba(255,255,255,0) 68%); }
-  .hero-in { position: relative; z-index: 1; padding: 28px 24px 26px; max-width: 440px; }
+  .hero-photo { position: absolute; top: 0; right: 0; width: 62%; height: 100%; object-fit: cover; object-position: 55% 40%;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 22%, #000 50%);
+            mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 22%, #000 50%); }
+  .hero-in { position: relative; z-index: 1; padding: 28px 24px 26px; max-width: 420px; }
   .hero h1 { color: #13284a; margin: 8px 0 10px; }
   .hero .proj { font-size: 13px; margin: 0 0 4px; color: #4a5a75; border-left: 3px solid #d7262f; padding-left: 10px; }
   .hero .sub { font-size: 16px; margin: 0 0 14px; }
   .hero .uk { color: #5d6b82; }
   .hero .addr { display: inline-block; background: #13284a; color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 15px; }
   @media (max-width: 640px) {
-    .hero-photo { position: static; display: block; width: 100%; height: 170px; object-position: 70% 55%; }
-    .hero::after { display: none; }
+    .hero-photo { position: static; display: block; width: 100%; height: 190px; object-position: 45% 35%;
+      -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+              mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
     .hero-in { padding: 18px 18px 20px; max-width: none; }
   }
   button:hover:not(:disabled) { background: #a3e2bf; }
@@ -92,7 +93,7 @@
 <body>
 <div class="wrap">
   <header class="hero">
-    <img class="hero-photo" src="stalas.jpg?v=zalias" alt="" aria-hidden="true">
+    <img class="hero-photo" src="vaikai.jpg?v=1" alt="" aria-hidden="true">
     <div class="hero-in">
       <p class="proj">Projekto pavadinimas: Užsieniečių vaikų įtraukties stiprinimas per neformalųjį ugdymą sporto veiklose regionuose.
         <span class="uk">Назва проєкту: Посилення інклюзії дітей-іноземців через неформальну освіту у спортивній діяльності в регіонах.</span></p>
