@@ -24,17 +24,17 @@
   .privacy { background: #f4f4f1; border-radius: 9px; padding: 10px 12px; margin: 4px 0 12px; }
   .hero { position: relative; overflow: hidden; border-radius: 18px; margin: 0 0 24px; color: #13284a; background: #fff;
     box-shadow: 0 1px 0 var(--line), 0 8px 24px rgba(19,40,74,.08); }
-  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 60%; }
+  .hero-photo { position: absolute; top: 0; right: 0; width: 72%; height: 100%; object-fit: cover; object-position: 60% 55%; }
   .hero::after { content: ""; position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(255,255,255,.97) 0%, rgba(255,255,255,.92) 42%, rgba(255,255,255,.35) 66%, rgba(255,255,255,0) 82%); }
-  .hero-in { position: relative; z-index: 1; padding: 28px 24px 26px; max-width: 470px; }
+    background: linear-gradient(90deg, #fff 0%, #fff 30%, rgba(255,255,255,.88) 44%, rgba(255,255,255,.3) 58%, rgba(255,255,255,0) 68%); }
+  .hero-in { position: relative; z-index: 1; padding: 28px 24px 26px; max-width: 440px; }
   .hero h1 { color: #13284a; margin: 8px 0 10px; }
   .hero .proj { font-size: 13px; margin: 0 0 4px; color: #4a5a75; border-left: 3px solid #d7262f; padding-left: 10px; }
   .hero .sub { font-size: 16px; margin: 0 0 14px; }
   .hero .uk { color: #5d6b82; }
   .hero .addr { display: inline-block; background: #13284a; color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 15px; }
   @media (max-width: 640px) {
-    .hero-photo { position: static; display: block; height: 170px; object-position: 70% 55%; }
+    .hero-photo { position: static; display: block; width: 100%; height: 170px; object-position: 70% 55%; }
     .hero::after { display: none; }
     .hero-in { padding: 18px 18px 20px; max-width: none; }
   }
