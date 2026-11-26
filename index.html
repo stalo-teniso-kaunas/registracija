@@ -23,6 +23,8 @@
   .addr { font-weight: 600; margin: 0; }
   .etapas { display: block; margin-top: 10px; color: var(--ink); font-weight: 600; }
   .etapas .uk { font-weight: 400; }
+  .parent { background: #eef6f1; color: var(--ink); border-radius: 9px; padding: 10px 12px; font-weight: 600; }
+  .parent .uk { font-weight: 400; }
   .privacy { background: #f4f4f1; border-radius: 9px; padding: 10px 12px; margin: 4px 0 12px; }
   .hero { position: relative; overflow: hidden; border-radius: 18px; margin: 0 0 24px; color: #13284a; background: #fff;
     box-shadow: 0 1px 0 var(--line), 0 8px 24px rgba(19,40,74,.08); }
@@ -117,31 +119,33 @@
     <div id="dates"><p class="loading">Tikrinamos laisvos vietos…</p></div>
 
     <form id="f" novalidate>
-      <h2>2. Jūsų duomenys</h2>
+      <h2>2. Vaiko duomenys</h2>
+      <p class="hint parent">👪 Registracijos duomenis pildo vienas iš vaiko tėvų / globėjų.
+        <span class="uk">Реєстраційні дані заповнює один із батьків / опікунів дитини.</span></p>
       <p class="hint">Duomenų reikia prieš užsiėmimą. Juos matys tik organizatorius.
         <span class="uk">Дані потрібні до заняття. Їх бачитиме лише організатор.</span></p>
       <div class="card">
-        <div class="field"><span class="f">Ar registruojatės pirmą kartą?</span>
+        <div class="field"><span class="f">Ar vaiką registruojate pirmą kartą?</span>
           <div class="pills">
             <label class="pill"><input type="radio" name="pirma" value="Taip"><span>Taip, pirmą kartą</span></label>
-            <label class="pill"><input type="radio" name="pirma" value="Ne"><span>Ne, jau registravausi</span></label>
+            <label class="pill"><input type="radio" name="pirma" value="Ne"><span>Ne, jau registravau</span></label>
           </div></div>
-        <div id="kartojasiInfo" class="note" hidden>Užtenka vardo, pavardės ir el. pašto, kurį nurodėte pirmą kartą. Kitus duomenis jau turime.
-          <span class="uk">Достатньо імені, прізвища та електронної пошти, які ви вказали першого разу. Інші дані у нас уже є.</span></div>
+        <div id="kartojasiInfo" class="note" hidden>Užtenka vaiko vardo, pavardės ir el. pašto, kurį nurodėte pirmą kartą. Kitus duomenis jau turime.
+          <span class="uk">Достатньо імені та прізвища дитини і електронної пошти, яку ви вказали першого разу. Інші дані у нас уже є.</span></div>
         <div id="pagrindiniai" hidden>
-        <div class="field"><label class="f" for="vardas">Vardas, pavardė</label>
-          <input type="text" id="vardas" autocomplete="name"></div>
-        <div class="field"><label class="f" for="pastas">El. paštas</label>
-          <input type="email" id="pastas" autocomplete="email"></div>
+        <div class="field"><label class="f" for="vardas">Vaiko vardas, pavardė</label>
+          <input type="text" id="vardas" autocomplete="off"></div>
         </div>
         <div id="pilni" hidden>
         <div class="row">
-          <div class="field"><label class="f" for="gimimo">Gimimo data</label>
+          <div class="field"><label class="f" for="gimimo">Vaiko gimimo data</label>
             <input type="date" id="gimimo"></div>
-          <div class="field"><label class="f" for="pilietybe">Pilietybė</label>
+          <div class="field"><label class="f" for="pilietybe">Vaiko pilietybė</label>
             <input type="text" id="pilietybe"></div>
         </div>
-        <div class="field"><label class="f" for="leidimas">Leidimo laikinai gyventi Lietuvoje dokumento nr. <small>(jei turite / <i>якщо маєте</i>)</small></label>
+        <div class="field"><label class="f" for="gyvena">Vaiko gyvenamoji vieta</label>
+          <input type="text" id="gyvena" autocomplete="street-address"></div>
+        <div class="field"><label class="f" for="leidimas">Vaiko leidimo laikinai gyventi Lietuvoje dokumento nr.</label>
           <input type="text" id="leidimas"></div>
         <div class="row">
           <div class="field"><label class="f" for="isduotas">Leidimo išdavimo data</label>
@@ -149,15 +153,19 @@
           <div class="field"><label class="f" for="galioja">Leidimo galiojimo pabaiga</label>
             <input type="date" id="galioja"></div>
         </div>
-        <div class="field"><label class="f" for="gyvena">Gyvenamoji vieta</label>
-          <input type="text" id="gyvena" autocomplete="street-address"></div>
-        <div class="field"><label class="f" for="tel">Tel. nr.</label>
+        </div>
+        <div id="pastoBlokas" hidden>
+        <div class="field"><label class="f" for="pastas">Tėvų / globėjų el. paštas</label>
+          <input type="email" id="pastas" autocomplete="email"></div>
+        </div>
+        <div id="pilni2" hidden>
+        <div class="field"><label class="f" for="tel">Tėvų / globėjų telefono nr.</label>
           <input type="tel" id="tel" autocomplete="tel"></div>
         </div>
         <p class="hint privacy">🔒 Ši asmeninė informacija viešai niekur nebus skelbiama. Renkamos informacijos reikalingumas pagrįstas projekto Nr. PMIF-2.05-K-01-03 vykdymo reikalavimais.
           <span class="uk">Ця особиста інформація ніде не буде оприлюднена. Необхідність збору інформації обґрунтована вимогами виконання проєкту № PMIF-2.05-K-01-03.</span></p>
         <label class="consent"><input type="checkbox" id="sutinku" required>
-          <span>Sutinku, kad mano duomenys būtų naudojami tik registracijai į šiuos užsiėmimus.</span></label>
+          <span>Sutinku, kad mano ir vaiko duomenys būtų naudojami tik registracijai į šiuos užsiėmimus.</span></label>
         <button type="submit" id="btn">Registruotis</button>
         <div class="msg" id="msg"></div>
       </div>
@@ -174,7 +182,7 @@
       <div><a href="tel:+37063524401">+370 635 24401</a></div>
       <div><a href="mailto:m.gabriele.m@gmail.com">m.gabriele.m@gmail.com</a></div>
     </div>
-    <p><a href="#" id="again">Registruoti kitą žmogų</a></p>
+    <p><a href="#" id="again">Registruoti kitą vaiką</a></p>
   </div>
 </div>
 
@@ -253,6 +261,8 @@ function rodytiLaukus() {
   const p = pirmaKarta();
   document.getElementById('pagrindiniai').hidden = !p;
   document.getElementById('pilni').hidden = p !== 'Taip';
+  document.getElementById('pilni2').hidden = p !== 'Taip';
+  document.getElementById('pastoBlokas').hidden = !p;
   document.getElementById('kartojasiInfo').hidden = p !== 'Ne';
 }
 document.querySelectorAll('input[name=pirma]').forEach(r => r.addEventListener('change', rodytiLaukus));
@@ -263,8 +273,7 @@ document.getElementById('f').addEventListener('submit', async (e) => {
   if (!pasirinkta.size) { rodytiKlaida('Pasirinkite bent vieną datą.'); document.getElementById('dates').scrollIntoView({behavior:'smooth'}); return; }
   const pirma = pirmaKarta();
   if (!pirma) { rodytiKlaida('Pažymėkite, ar registruojatės pirmą kartą.'); return; }
-  const privalomi = pirma === 'Taip' ? ['vardas','pastas','gimimo','pilietybe','gyvena','tel'] : ['vardas','pastas'];
-  if (pirma === 'Taip' && v('leidimas')) privalomi.push('isduotas', 'galioja');
+  const privalomi = pirma === 'Taip' ? ['vardas','gimimo','pilietybe','gyvena','leidimas','isduotas','galioja','pastas','tel'] : ['vardas','pastas'];
   for (const id of privalomi) {
     if (!v(id)) { rodytiKlaida('Užpildykite visus laukus.'); document.getElementById(id).focus(); return; }
   }
@@ -279,24 +288,24 @@ document.getElementById('f').addEventListener('submit', async (e) => {
   try {
     const r = await fetch(API, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'},
       body: JSON.stringify(pirma === 'Taip'
-        ? { datos, pirma, vardas: v('vardas'), gimimo: v('gimimo'), pilietybe: v('pilietybe'), leidimas: v('leidimas'),
+        ? { datos, pirma, sutikimas: true, vardas: v('vardas'), gimimo: v('gimimo'), pilietybe: v('pilietybe'), leidimas: v('leidimas'),
             isduotas: v('isduotas'), galioja: v('galioja'), gyvena: v('gyvena'), pastas: v('pastas'), tel: v('tel') }
-        : { datos, pirma, vardas: v('vardas'), pastas: v('pastas') }) });
+        : { datos, pirma, sutikimas: true, vardas: v('vardas'), pastas: v('pastas') }) });
     const j = await r.json();
     if (j.uzimta) { uzimta = j.uzimta; }
     if (j.ok) {
       document.getElementById('formBox').hidden = true;
       document.getElementById('doneBox').hidden = false;
       document.getElementById('doneTxt').textContent =
-        `${v('vardas')}, laukiame jūsų: ${datos.map(grazi).join(', ')}, ${LAIKAS} val.`;
+        `${v('vardas')} užregistruotas (-a): ${datos.map(grazi).join(', ')}, ${LAIKAS} val. Laukiame!`;
       window.scrollTo({top: 0, behavior: 'smooth'});
     } else if (j.pilnos) {
       piesti();
       rodytiKlaida('Kol pildėte, užsipildė: ' + j.pilnos.map(grazi).join(', ') + '. Pasirinkite kitą datą.');
     } else if (j.nerasta) {
-      rodytiKlaida('Neradome ankstesnės registracijos su šiuo el. paštu ar vardu. Patikrinkite, ar įrašėte taip pat kaip pirmą kartą, arba pažymėkite „Taip, pirmą kartą“ ir užpildykite visus laukus.');
+      rodytiKlaida('Neradome ankstesnės šio vaiko registracijos. Patikrinkite, ar vaiko vardą ir el. paštą įrašėte taip pat kaip pirmą kartą, arba pažymėkite „Taip, pirmą kartą“ ir užpildykite visus laukus.');
     } else if (j.kartojasi) {
-      rodytiKlaida('Su šiuo el. paštu jau esate užsiregistravę: ' + j.kartojasi.map(grazi).join(', ') + '. Atžymėkite šią datą.');
+      rodytiKlaida('Šis vaikas su šiuo el. paštu jau užregistruotas: ' + j.kartojasi.map(grazi).join(', ') + '. Atžymėkite šią datą.');
     } else {
       rodytiKlaida(j.klaida || 'Nepavyko užsiregistruoti. Bandykite dar kartą.');
     }

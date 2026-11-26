@@ -82,20 +82,20 @@
   <form class="box" id="editF">
     <h3 id="mTitle">Redaguoti</h3>
     <label for="e_data">Užsiėmimo data</label><select id="e_data"></select>
-    <label for="e_vardas">Vardas, pavardė</label><input id="e_vardas">
+    <label for="e_vardas">Vaiko vardas, pavardė</label><input id="e_vardas">
     <div class="grid2">
-      <div><label for="e_gimimo">Gimimo data</label><input id="e_gimimo" type="date"></div>
+      <div><label for="e_gimimo">Vaiko gimimo data</label><input id="e_gimimo" type="date"></div>
       <div><label for="e_pilietybe">Pilietybė</label><input id="e_pilietybe"></div>
     </div>
-    <label for="e_leidimas">Leidimo laikinai gyventi Lietuvoje dok. nr.</label><input id="e_leidimas">
+    <label for="e_leidimas">Vaiko leidimo laikinai gyventi Lietuvoje dok. nr.</label><input id="e_leidimas">
     <div class="grid2">
       <div><label for="e_isduotas">Leidimo išdavimo data</label><input id="e_isduotas" type="date"></div>
       <div><label for="e_galioja">Leidimo galiojimo pabaiga</label><input id="e_galioja" type="date"></div>
     </div>
-    <label for="e_gyvena">Gyvenamoji vieta</label><input id="e_gyvena">
+    <label for="e_gyvena">Vaiko gyvenamoji vieta</label><input id="e_gyvena">
     <div class="grid2">
-      <div><label for="e_pastas">El. paštas</label><input id="e_pastas" type="email"></div>
-      <div><label for="e_tel">Tel. nr.</label><input id="e_tel"></div>
+      <div><label for="e_pastas">Tėvų / globėjų el. paštas</label><input id="e_pastas" type="email"></div>
+      <div><label for="e_tel">Tėvų / globėjų tel. nr.</label><input id="e_tel"></div>
     </div>
     <label for="e_pastabos">Pastabos (mato tik administratorius)</label><textarea id="e_pastabos"></textarea>
     <div class="msg" id="mMsg"></div>
@@ -144,7 +144,7 @@ function rodyti(j) {
         <div class="det">Gim. ${esc(r.gimimo)} · ${esc(r.pilietybe)}</div>
         ${r.leidimas ? `<div class="det">Leidimas: ${esc(r.leidimas)} · išduotas ${esc(r.isduotas) || '—'} · galioja iki ${esc(r.galioja) || '—'}${r.galioja && r.galioja < d ? ' <b class="warn">⚠ baigs galioti iki užsiėmimo</b>' : ''}</div>` : ''}
         <div class="det">${esc(r.gyvena)}</div>
-        <div class="det">${esc(r.pastas)} · ${esc(r.tel)} · užsiregistravo ${esc(r.kada)}</div>
+        <div class="det">${esc(r.pastas)} · ${esc(r.tel)} · užsiregistravo ${esc(r.kada)}${r.sutikimas ? " · sutikimas: " + esc(r.sutikimas) : ""}</div>
         ${r.pastabos ? `<div class="note">📝 ${esc(r.pastabos)}</div>` : ''}
       </div><div class="acts"><button class="sec" data-edit="${esc(r.id)}">Keisti</button><button class="sec del" data-del="${esc(r.id)}">Ištrinti</button></div></div>`;
     });
@@ -193,7 +193,7 @@ document.getElementById('loginF').addEventListener('submit', async e => {
 
 function atidaryti(irasas, naujaData) {
   redaguojamas = irasas ? irasas.id : null;
-  document.getElementById('mTitle').textContent = irasas ? 'Redaguoti registraciją' : 'Pridėti žmogų';
+  document.getElementById('mTitle').textContent = irasas ? 'Redaguoti registraciją' : 'Pridėti vaiką';
   const sel = document.getElementById('e_data');
   sel.innerHTML = B.datos.map(d => `<option value="${d}">${d} (${grazi(d)}, ${savaite(d)})</option>`).join('');
   if (irasas && B.datos.indexOf(irasas.data) < 0) sel.innerHTML += `<option value="${esc(irasas.data)}">${esc(irasas.data)}</option>`;
