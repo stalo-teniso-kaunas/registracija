@@ -50,6 +50,8 @@
   .modal .btns { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
   @media (max-width:560px){ .grid2{grid-template-columns:1fr;} .person{grid-template-columns:1fr;} }
   .loading { color: var(--muted); }
+  .tag { font-size: 12px; font-weight: 600; color: var(--muted); background: #f1f1ee; border-radius: 999px; padding: 1px 8px; margin-left: 4px; }
+  .warn { color: var(--err); }
 </style>
 </head>
 <body>
@@ -86,6 +88,10 @@
       <div><label for="e_pilietybe">Pilietybė</label><input id="e_pilietybe"></div>
     </div>
     <label for="e_leidimas">Leidimo laikinai gyventi dok. nr.</label><input id="e_leidimas">
+    <div class="grid2">
+      <div><label for="e_isduotas">Leidimo išdavimo data</label><input id="e_isduotas" type="date"></div>
+      <div><label for="e_galioja">Leidimo galiojimo pabaiga</label><input id="e_galioja" type="date"></div>
+    </div>
     <label for="e_gyvena">Gyvenamoji vieta</label><input id="e_gyvena">
     <div class="grid2">
       <div><label for="e_pastas">El. paštas</label><input id="e_pastas" type="email"></div>
@@ -101,7 +107,7 @@
 const API = 'https://script.google.com/macros/s/AKfycbwJCmmsGYu0dM_1Xe_0zQ-W_Vv7Gii4GrduXF53Mspr1lWrADQs_3puLIllHep3k6Bn/exec';
 const MEN = ['sausio','vasario','kovo','balandžio','gegužės','birželio','liepos','rugpjūčio','rugsėjo','spalio','lapkričio','gruodžio'];
 const SAV = ['sekmadienis','pirmadienis','antradienis','trečiadienis','ketvirtadienis','penktadienis','šeštadienis'];
-const LAUKAI = ['vardas','gimimo','pilietybe','leidimas','gyvena','pastas','tel','pastabos'];
+const LAUKAI = ['vardas','gimimo','pilietybe','leidimas','isduotas','galioja','gyvena','pastas','tel','pastabos'];
 let KODAS = '', B = null, redaguojamas = null;
 
 function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
@@ -134,8 +140,9 @@ function rodyti(j) {
     if (!zm.length) days += `<div class="empty">Kol kas niekas neužsiregistravo.</div>`;
     zm.forEach(r => {
       days += `<div class="person"><div>
-        <div class="name">${esc(r.vardas)}</div>
-        <div class="det">Gim. ${esc(r.gimimo)} · ${esc(r.pilietybe)}${r.leidimas ? ' · Leidimas: ' + esc(r.leidimas) : ''}</div>
+        <div class="name">${esc(r.vardas)} <span class="tag">${r.pirma === 'Ne' ? 'kartotinė registracija' : r.pirma === 'Taip' ? 'pirmą kartą' : 'pridėta ranka'}</span></div>
+        <div class="det">Gim. ${esc(r.gimimo)} · ${esc(r.pilietybe)}</div>
+        ${r.leidimas ? `<div class="det">Leidimas: ${esc(r.leidimas)} · išduotas ${esc(r.isduotas) || '—'} · galioja iki ${esc(r.galioja) || '—'}${r.galioja && r.galioja < d ? ' <b class="warn">⚠ baigs galioti iki užsiėmimo</b>' : ''}</div>` : ''}
         <div class="det">${esc(r.gyvena)}</div>
         <div class="det">${esc(r.pastas)} · ${esc(r.tel)} · užsiregistravo ${esc(r.kada)}</div>
         ${r.pastabos ? `<div class="note">📝 ${esc(r.pastabos)}</div>` : ''}
